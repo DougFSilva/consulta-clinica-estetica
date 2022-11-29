@@ -1,4 +1,4 @@
-package model;
+package model.pessoa;
 
 public enum Estado {
 

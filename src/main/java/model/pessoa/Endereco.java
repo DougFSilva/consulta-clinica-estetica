@@ -1,4 +1,4 @@
-package model;
+package model.pessoa;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

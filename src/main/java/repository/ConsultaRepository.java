@@ -1,5 +1,5 @@
 package repository;
 
-public class ConsultaRepository {
+public interface ConsultaRepository {
 
 }
