@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.clinicaEstetica.exception.ObjetoNaoEncontradoException;
 import br.com.clinicaEstetica.exception.ViolacaoDeIntegridadeDeDadosException;
 import br.com.clinicaEstetica.model.pessoa.Email;
+import br.com.clinicaEstetica.model.pessoa.especialista.DadosAdicionarOuRemoverProcedimento;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosCriarEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosEditarEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.Especialista;
@@ -22,6 +23,9 @@ public class EspecialistaService {
 
 	@Autowired
 	private EspecialistaRepository repository;
+	
+	@Autowired
+	private ProcedimentoService procedimentoService;
 
 	@Transactional
 	public Especialista criar(DadosCriarEspecialista dados) {
@@ -33,16 +37,22 @@ public class EspecialistaService {
 	}
 
 	@Transactional
-	public Especialista adicionarProcedimento(Long id, List<Procedimento> procedimentos) {
-		Especialista especialista = buscar(id);
-		procedimentos.forEach(procedimento -> especialista.adicionarProcedimento(procedimento));
+	public Especialista adicionarProcedimento(DadosAdicionarOuRemoverProcedimento dados) {
+		Especialista especialista = buscar(dados.id());
+		dados.tipos().forEach(tipo -> {
+			Procedimento procedimento = procedimentoService.buscarPorTipo(tipo);
+			if(especialista.getProcedimentos().contains(procedimento)) {
+				throw new ViolacaoDeIntegridadeDeDadosException(especialista.getNome() + " já possui o procedimento " + procedimento.getTipo());
+			}
+			especialista.adicionarProcedimento(procedimentoService.buscarPorTipo(tipo));
+		});
 		return repository.save(especialista);
 	}
 
 	@Transactional
-	public Especialista removerProcedimento(Long id, List<Procedimento> procedimentos) {
-		Especialista especialista = buscar(id);
-		procedimentos.forEach(procedimento -> especialista.removerProcedimento(procedimento));
+	public Especialista removerProcedimento(DadosAdicionarOuRemoverProcedimento dados) {
+		Especialista especialista = buscar(dados.id());
+		dados.tipos().forEach(tipo -> especialista.removerProcedimento(procedimentoService.buscarPorTipo(tipo)));
 		return repository.save(especialista);
 	}
 

@@ -39,7 +39,7 @@ public class ClienteService {
 	@Transactional
 	public Cliente editar(DadosEditarCliente dados) {
 		Cliente cliente = buscar(dados.id());
-		verificarIntegridadeDeDados(cliente, dados);
+		verificarIntegridadeDeDados(dados);
 		cliente.setNome(dados.nome());
 		cliente.setCpf(dados.cpf());
 		cliente.setTelefone(dados.telefone());
@@ -68,23 +68,31 @@ public class ClienteService {
 	}
 	
 	private void verificarIntegridadeDeDados(DadosCriarCliente dados) {
-		if(repository.findByEmail(new Email(dados.email())).isPresent()) {
-			throw new ViolacaoDeIntegridadeDeDadosException("Usuário com email " + dados.email() + " já cadastrado!");
-		}
-		if(repository.findByCpf(dados.cpf()).isPresent()) {
-			throw new ViolacaoDeIntegridadeDeDadosException("Usuário com cpf " + dados.cpf() + " já cadastrado!");
-		}
+		Email email = new Email(dados.email());
+		List<Cliente> clientes = repository.findByEmailOrCpf(email, dados.cpf());
+		clientes.forEach(cliente -> {
+			if(cliente.getEmail().equals(email)) {
+				throw new ViolacaoDeIntegridadeDeDadosException("Usuário com email " + dados.email() + " já cadastrado!");
+			}
+			if(cliente.getCpf().equals(dados.cpf())){
+				throw new ViolacaoDeIntegridadeDeDadosException("Usuário com cpf " + dados.cpf() + " já cadastrado!");
+			}
+		});
 	}
 	
-	private void verificarIntegridadeDeDados(Cliente cliente, DadosEditarCliente dados) {
-		Optional<Cliente> clientePorCpf = repository.findByCpf(dados.cpf());
-		Optional<Cliente> clientePorEmail = repository.findByEmail(new Email(dados.email()));
-		if(clientePorCpf.isPresent() && !clientePorCpf.get().equals(cliente)) {
-			throw new ViolacaoDeIntegridadeDeDadosException("Usuário com cpf " + dados.cpf() + " já cadastrado!");
-		}
-		if(clientePorEmail.isPresent() && !clientePorEmail.get().equals(cliente)) {
-			throw new ViolacaoDeIntegridadeDeDadosException("Usuário com email " + dados.email() + " já cadastrado!");
-		}
+	private void verificarIntegridadeDeDados(DadosEditarCliente dados) {
+		Email email = new Email(dados.email());
+		List<Cliente> clientes = repository.findByEmailOrCpf(email, dados.cpf());
+		clientes.forEach(cliente -> {
+			if(cliente.getId() != dados.id()) {
+				if(cliente.getEmail().equals(email)) {
+					throw new ViolacaoDeIntegridadeDeDadosException("Usuário com email " + dados.email() + " já cadastrado!");
+				}
+				if(cliente.getCpf().equals(dados.cpf())){
+					throw new ViolacaoDeIntegridadeDeDadosException("Usuário com cpf " + dados.cpf() + " já cadastrado!");
+				}
+			}
+		});
 	}
 	
 }

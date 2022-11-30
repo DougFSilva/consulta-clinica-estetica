@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.clinicaEstetica.model.pessoa.especialista.DadosAdicionarOuRemoverProcedimento;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosCriarEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosEditarEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.Especialista;
-import br.com.clinicaEstetica.model.procedimento.Procedimento;
 import br.com.clinicaEstetica.service.EspecialistaService;
 import jakarta.validation.Valid;
 
@@ -37,14 +37,14 @@ public class EspecialistaController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@PostMapping(value = "/{id}/adicionar-procedimento")
-	public ResponseEntity<Especialista> adicionarProcedimento(@PathVariable Long id, @RequestBody List<Procedimento> procedimentos){
-		return ResponseEntity.ok().body(service.adicionarProcedimento(id, procedimentos));
+	@PostMapping(value = "/adicionar-procedimento")
+	public ResponseEntity<Especialista> adicionarProcedimento(@RequestBody @Valid DadosAdicionarOuRemoverProcedimento dados){
+		return ResponseEntity.ok().body(service.adicionarProcedimento(dados));
 	}
 	
-	@PostMapping(value = "/{id}/remover-procedimento")
-	public ResponseEntity<Especialista> removerProcedimento(@PathVariable Long id, @RequestBody List<Procedimento> procedimentos){
-		return ResponseEntity.ok().body(service.removerProcedimento(id, procedimentos));
+	@PostMapping(value = "/remover-procedimento")
+	public ResponseEntity<Especialista> removerProcedimento(@RequestBody @Valid DadosAdicionarOuRemoverProcedimento dados){
+		return ResponseEntity.ok().body(service.removerProcedimento(dados));
 	}
 	
 	@DeleteMapping(value = "/{id}")

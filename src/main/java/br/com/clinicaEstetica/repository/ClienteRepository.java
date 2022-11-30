@@ -1,5 +1,6 @@
 package br.com.clinicaEstetica.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long>{
 	Optional<Cliente> findByEmail(Email email);
 
 	Optional<Cliente> findByCpf(String cpf);
+	
+	List<Cliente> findByEmailOrCpf(Email email, String cpf);
 
 }
