@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,8 +65,8 @@ public class ClienteService {
 		return cliente.orElseThrow(() -> new ObjetoNaoEncontradoException("Cliente com cpf " + cpf + " não encontrado!"));
 	}
 	
-	public List<Cliente> buscarTodos(){
-		return repository.findAll();
+	public Page<Cliente> buscarTodos(Pageable paginacao){
+		return repository.findAll(paginacao);
 	}
 	
 	private void verificarIntegridadeDeDados(DadosCriarCliente dados) {

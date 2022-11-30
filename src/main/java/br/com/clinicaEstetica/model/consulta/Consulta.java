@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import br.com.clinicaEstetica.model.pessoa.cliente.Cliente;
 import br.com.clinicaEstetica.model.pessoa.especialista.Especialista;
 import br.com.clinicaEstetica.model.procedimento.Procedimento;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,18 +33,19 @@ public class Consulta {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Cliente cliente;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Procedimento procedimento;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Especialista especialista;
 	
 	private LocalDate data;
 	
-	private LocalTime horario;
+	private LocalTime horarioInicial;
 	
+	private LocalTime horarioFinal;
 	
 }

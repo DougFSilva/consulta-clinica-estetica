@@ -1,9 +1,10 @@
 package br.com.clinicaEstetica.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,8 +74,13 @@ public class EspecialistaController {
 		return ResponseEntity.ok().body(service.buscarPorRegistro(registro));
 	}
 	
+	@GetMapping(value = "/procedimento/{tipo}")
+	public ResponseEntity <Page<Especialista>> buscarPorTipoDeProcedimento(Pageable paginacao, @PathVariable String tipo){
+		return ResponseEntity.ok().body(service.buscarPorTipoDeProcedimento(paginacao, tipo));
+	}
+	
 	@GetMapping()
-	public ResponseEntity<List<Especialista>> buscarTodos(){
-		return ResponseEntity.ok().body(service.buscarTodos());
+	public ResponseEntity<Page<Especialista>> buscarTodos(Pageable paginacao){
+		return ResponseEntity.ok().body(service.buscarTodos(paginacao));
 	}
 }
