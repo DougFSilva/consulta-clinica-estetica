@@ -12,15 +12,18 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.clinicaEstetica.model.consulta.Consulta;
-import br.com.clinicaEstetica.model.consulta.DadosCriarConsulta;
 import br.com.clinicaEstetica.model.consulta.DadosDeConsulta;
+import br.com.clinicaEstetica.model.consulta.DadosMarcarConsulta;
+import br.com.clinicaEstetica.model.consulta.DadosRemarcarConsulta;
 import br.com.clinicaEstetica.service.ConsultaService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/consulta")
@@ -31,7 +34,7 @@ public class ConsultaController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<Consulta> marcar(@RequestBody DadosCriarConsulta dados){
+	public ResponseEntity<Consulta> marcar(@RequestBody @Valid DadosMarcarConsulta dados){
 		Consulta consulta = service.marcar(dados);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(consulta.getId()).toUri();
 		return ResponseEntity.created(uri).build();
@@ -41,6 +44,12 @@ public class ConsultaController {
 	public ResponseEntity<Void> desmarcar(@PathVariable Long id){
 		service.desmarcar(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping(value = "/remarcar")
+	public ResponseEntity<Consulta> remarcar (@RequestBody @Valid DadosRemarcarConsulta dados){
+		Consulta consulta = service.remarcar(dados);
+		return ResponseEntity.ok().body(consulta);
 	}
 	
 	@GetMapping(value = "/{id}")

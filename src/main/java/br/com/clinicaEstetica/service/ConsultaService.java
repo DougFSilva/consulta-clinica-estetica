@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.clinicaEstetica.exception.ErroNaMarcacaoDeConsultaException;
 import br.com.clinicaEstetica.exception.ObjetoNaoEncontradoException;
 import br.com.clinicaEstetica.model.consulta.Consulta;
-import br.com.clinicaEstetica.model.consulta.DadosCriarConsulta;
 import br.com.clinicaEstetica.model.consulta.DadosDeConsulta;
+import br.com.clinicaEstetica.model.consulta.DadosMarcarConsulta;
+import br.com.clinicaEstetica.model.consulta.DadosRemarcarConsulta;
 import br.com.clinicaEstetica.model.pessoa.cliente.Cliente;
 import br.com.clinicaEstetica.model.pessoa.especialista.Especialista;
 import br.com.clinicaEstetica.model.procedimento.Procedimento;
@@ -35,7 +37,8 @@ public class ConsultaService {
 	@Autowired
 	private ClienteService clienteService;
 
-	public Consulta marcar(DadosCriarConsulta dados) {
+	@Transactional
+	public Consulta marcar(DadosMarcarConsulta dados) {
 		Especialista especialista = especialistaService.buscar(dados.especialistaId());
 		Procedimento procedimento = procedimentoService.buscar(dados.procedimentoId());
 		if (!especialista.getProcedimentos().contains(procedimento)) {
@@ -52,6 +55,17 @@ public class ConsultaService {
 	public void desmarcar(Long id) {
 		Consulta consulta = buscar(id);
 		repository.delete(consulta);
+	}
+	
+	@Transactional
+	public Consulta remarcar(DadosRemarcarConsulta dados) {
+		Consulta consulta = buscar(dados.id());
+		verificarDisponibilidadeDeHorario(consulta.getEspecialista(), consulta.getProcedimento(), dados.data(), dados.horario());
+		LocalTime horarioFinal = LocalTime.ofSecondOfDay(dados.horario().toSecondOfDay() + (consulta.getProcedimento().getDuracao()*60));
+		consulta.setData(dados.data());
+		consulta.setHorarioInicial(dados.horario());
+		consulta.setHorarioFinal(horarioFinal);
+		return repository.save(consulta);
 	}
 
 	public Consulta buscar(Long id) {
