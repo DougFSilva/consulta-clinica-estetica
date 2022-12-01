@@ -15,6 +15,7 @@ import br.com.clinicaEstetica.exception.ViolacaoDeIntegridadeDeDadosException;
 import br.com.clinicaEstetica.model.pessoa.Email;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosAdicionarOuRemoverProcedimento;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosCriarEspecialista;
+import br.com.clinicaEstetica.model.pessoa.especialista.DadosDeEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosEditarEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.Especialista;
 import br.com.clinicaEstetica.model.procedimento.Procedimento;
@@ -80,26 +81,34 @@ public class EspecialistaService {
 		return especialista
 				.orElseThrow(() -> new ObjetoNaoEncontradoException("Especialista com id " + id + " não encontrado!"));
 	}
-
-	public Especialista buscarPorCpf(String cpf) {
-		Optional<Especialista> especialista = repository.findByCpf(cpf);
-		return especialista.orElseThrow(
-				() -> new ObjetoNaoEncontradoException("Especialista com cpf " + cpf + " não encontrado!"));
+	
+	public DadosDeEspecialista buscarDados(Long id) {
+		return new DadosDeEspecialista(buscar(id));
 	}
 
-	public Especialista buscarPorRegistro(String registro) {
+	public DadosDeEspecialista buscarPorCpf(String cpf) {
+		Optional<Especialista> especialista = repository.findByCpf(cpf);
+		if(especialista.isEmpty()) {
+			throw new ObjetoNaoEncontradoException("Especialista com cpf " + cpf + " não encontrado!");
+		}
+		return new DadosDeEspecialista(especialista.get());
+	}
+
+	public DadosDeEspecialista buscarPorRegistro(String registro) {
 		Optional<Especialista> especialista = repository.findByRegistro(registro);
-		return especialista.orElseThrow(
-				() -> new ObjetoNaoEncontradoException("Especialista com registro " + registro + " não encontrado!"));
+		if(especialista.isEmpty()) {
+			throw new ObjetoNaoEncontradoException("Especialista com registro " + registro + " não encontrado!");
+		}
+		return new DadosDeEspecialista(especialista.get());
 	}
 	
-	public Page<Especialista> buscarPorTipoDeProcedimento(Pageable paginacao, String tipoDeProcedimento){
+	public Page<DadosDeEspecialista> buscarPorTipoDeProcedimento(Pageable paginacao, String tipoDeProcedimento){
 		Procedimento procedimento = procedimentoService.buscarPorTipo(tipoDeProcedimento);
-		return repository.findByProcedimentos(paginacao, procedimento);
+		return repository.findByProcedimentos(paginacao, procedimento).map(DadosDeEspecialista::new);
 	}
 
-	public Page<Especialista> buscarTodos(Pageable paginacao) {
-		return repository.findAll(paginacao);
+	public Page<DadosDeEspecialista> buscarTodos(Pageable paginacao) {
+		return repository.findAll(paginacao).map(DadosDeEspecialista::new);
 	}
 
 	private void verificarIntegridadeDeDados(DadosCriarEspecialista dados) {

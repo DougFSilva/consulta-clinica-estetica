@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosAdicionarOuRemoverProcedimento;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosCriarEspecialista;
+import br.com.clinicaEstetica.model.pessoa.especialista.DadosDeEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.DadosEditarEspecialista;
 import br.com.clinicaEstetica.model.pessoa.especialista.Especialista;
 import br.com.clinicaEstetica.service.EspecialistaService;
@@ -60,27 +61,27 @@ public class EspecialistaController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Especialista> buscar(@PathVariable Long id){
-		return ResponseEntity.ok().body(service.buscar(id));
+	public ResponseEntity<DadosDeEspecialista> buscar(@PathVariable Long id){
+		return ResponseEntity.ok().body(service.buscarDados(id));
 	}
 	
 	@GetMapping(value = "/cpf/{cpf}")
-	public ResponseEntity<Especialista> buscarPorCpf(@PathVariable String cpf){
+	public ResponseEntity<DadosDeEspecialista> buscarPorCpf(@PathVariable String cpf){
 		return ResponseEntity.ok().body(service.buscarPorCpf(cpf));
 	}
 	
 	@GetMapping(value = "/registro/{registro}")
-	public ResponseEntity<Especialista> buscarPorRegistro(@PathVariable String registro){
+	public ResponseEntity<DadosDeEspecialista> buscarPorRegistro(@PathVariable String registro){
 		return ResponseEntity.ok().body(service.buscarPorRegistro(registro));
 	}
 	
 	@GetMapping(value = "/procedimento/{tipo}")
-	public ResponseEntity <Page<Especialista>> buscarPorTipoDeProcedimento(Pageable paginacao, @PathVariable String tipo){
+	public ResponseEntity <Page<DadosDeEspecialista>> buscarPorTipoDeProcedimento(Pageable paginacao, @PathVariable String tipo){
 		return ResponseEntity.ok().body(service.buscarPorTipoDeProcedimento(paginacao, tipo));
 	}
 	
 	@GetMapping()
-	public ResponseEntity<Page<Especialista>> buscarTodos(Pageable paginacao){
+	public ResponseEntity<Page<DadosDeEspecialista>> buscarTodos(Pageable paginacao){
 		return ResponseEntity.ok().body(service.buscarTodos(paginacao));
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.clinicaEstetica.model.pessoa.cliente.Cliente;
 import br.com.clinicaEstetica.model.pessoa.cliente.DadosCriarCliente;
+import br.com.clinicaEstetica.model.pessoa.cliente.DadosDeCliente;
 import br.com.clinicaEstetica.model.pessoa.cliente.DadosEditarCliente;
 import br.com.clinicaEstetica.service.ClienteService;
 import jakarta.validation.Valid;
@@ -48,17 +49,17 @@ public class ClienteController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Cliente> buscar(@PathVariable Long id){
-		return ResponseEntity.ok().body(service.buscar(id));
+	public ResponseEntity<DadosDeCliente> buscar(@PathVariable Long id){
+		return ResponseEntity.ok().body(service.buscarDados(id));
 	}
 	
 	@GetMapping(value = "/cpf/{cpf}")
-	public ResponseEntity<Cliente> buscarPorCpf(@PathVariable String cpf){
+	public ResponseEntity<DadosDeCliente> buscarPorCpf(@PathVariable String cpf){
 		return ResponseEntity.ok().body(service.buscarPorCpf(cpf));
 	}
 	
 	@GetMapping
-	public ResponseEntity<Page<Cliente>> buscarTodos(Pageable paginacao){
+	public ResponseEntity<Page<DadosDeCliente>> buscarTodos(Pageable paginacao){
 		return ResponseEntity.ok().body(service.buscarTodos(paginacao));
 	}
 	

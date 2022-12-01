@@ -15,6 +15,7 @@ import br.com.clinicaEstetica.model.pessoa.Email;
 import br.com.clinicaEstetica.model.pessoa.Endereco;
 import br.com.clinicaEstetica.model.pessoa.cliente.Cliente;
 import br.com.clinicaEstetica.model.pessoa.cliente.DadosCriarCliente;
+import br.com.clinicaEstetica.model.pessoa.cliente.DadosDeCliente;
 import br.com.clinicaEstetica.model.pessoa.cliente.DadosEditarCliente;
 import br.com.clinicaEstetica.repository.ClienteRepository;
 
@@ -60,13 +61,20 @@ public class ClienteService {
 		return cliente.orElseThrow(() -> new ObjetoNaoEncontradoException("Cliente com id " + id + " não encontrado!"));
 	}
 	
-	public Cliente buscarPorCpf(String cpf) {
-		Optional<Cliente> cliente = repository.findByCpf(cpf);
-		return cliente.orElseThrow(() -> new ObjetoNaoEncontradoException("Cliente com cpf " + cpf + " não encontrado!"));
+	public DadosDeCliente buscarDados(Long id) {
+		return new DadosDeCliente(buscar(id));
 	}
 	
-	public Page<Cliente> buscarTodos(Pageable paginacao){
-		return repository.findAll(paginacao);
+	public DadosDeCliente buscarPorCpf(String cpf) {
+		Optional<Cliente> cliente = repository.findByCpf(cpf);
+		if(cliente.isEmpty()) {
+			throw new ObjetoNaoEncontradoException("Cliente com cpf " + cpf + " não encontrado!");
+		}
+		return new DadosDeCliente(cliente.get());
+	}
+	
+	public Page<DadosDeCliente> buscarTodos(Pageable paginacao){
+		return repository.findAll(paginacao).map(DadosDeCliente::new);
 	}
 	
 	private void verificarIntegridadeDeDados(DadosCriarCliente dados) {
