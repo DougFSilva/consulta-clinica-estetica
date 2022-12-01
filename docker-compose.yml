@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  mysql:
+    image: mysql
+    container_name: ce-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass # Senha do banco de dados
+      - MYSQL_DATABASE=clinica_estetica
+    ports:
+      - 3308:3306
+    volumes:
+      - /var/lib/mysql
+    networks:
+      - clinica-estetica
+    restart: always
+  
+  backend:
+    build: .
+    container_name: ce-backend
+    ports:
+      - 8081:8080
+    environment:
+      - DATABASE_URL=jdbc:mysql://mysql:3306/clinica_estetica?createDatabaseIfNotExist=true&autoReconnect=true
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=pass
+    networks:
+      - clinica-estetica
+    depends_on:
+      - mysql
+      
+networks:
+  clinica-estetica:
+    driver: bridge
